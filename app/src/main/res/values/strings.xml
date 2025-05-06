@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">arcade</string>
+    <string name="wordle">WORDLE</string>
+    <string name="number_of_letters">Number of Letters\:</string>
+    <string name="start_game">Start Game</string>
+    <string name="_3">3</string>
+    <string name="underscore">_</string>
+    <string name="guess">GUESS</string>
+    <string name="enter_guess">Enter Guess\:</string>
+    <string name="_6">6</string>
+    <string name="_5">5</string>
+    <string name="_4">4</string>
+    <string name="play">PLAY</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="arkade">arcade</string>
+    <string name="secure">Secure</string>
+    <string name="dont_secure">Dont Secure</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
+    <string name="home">HOME</string>
+    <string name="guess_the_word">Guess the word</string>
+    <string name="word_rank">WORD RANK</string>
+    <string name="play_again">PLAY AGAIN</string>
+    <string name="exit">EXIT</string>
+    <string-array name="dropdown_items">
+        <item>Select a category</item>
+        <item>country</item>
+        <item>fruits</item>
+        <item>states</item>
+    </string-array>
+</resources>

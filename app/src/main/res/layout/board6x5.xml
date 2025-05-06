@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/b5x6"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_gravity="center"
+    android:layout_weight="2"
+    android:orientation="vertical"
+    android:visibility="visible"
+    tools:showIn="@layout/wordle">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r1c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r1c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r1c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r1c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r1c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r2c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r2c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r2c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r2c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r2c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r3c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r3c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r3c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r3c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r3c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r4c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r4c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r4c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r4c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r4c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r5c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r5c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r5c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r5c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r5c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/b5x6r6c1"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r6c2"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r6c3"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r6c4"
+            style="@style/wordle_tile" />
+
+        <TextView
+            android:id="@+id/b5x6r6c5"
+            style="@style/wordle_tile" />
+    </TableRow>
+</LinearLayout>
