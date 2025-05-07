@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 class Home : AppCompatActivity() {
 
     private lateinit var btnWordle:Button
-    private lateinit var btnLexipass:Button
+    private lateinit var btnWordRank:Button
+    private lateinit var btnConnectFour : Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,13 +17,18 @@ class Home : AppCompatActivity() {
         setContentView(R.layout.home)
 
         btnWordle = findViewById(R.id.btnWordle)
-        btnLexipass = findViewById(R.id.btnLexipass)
+        btnWordRank = findViewById(R.id.btnWordRank)
+        btnConnectFour = findViewById(R.id.btnConnectFour)
 
         btnWordle.setOnClickListener {
             startActivity(Intent(this, Wordle::class.java))
         }
-        btnLexipass.setOnClickListener {
+        btnWordRank.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        btnConnectFour.setOnClickListener {
+            startActivity(Intent(this,ConnectFour::class.java))
         }
     }
 }

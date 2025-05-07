@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ConnectFour">
+
+    <LinearLayout
+        android:id="@+id/llLobby"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnHost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/host_game" />
+
+        <EditText
+            android:id="@+id/etRoomCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_room_code"
+            android:layout_marginTop="50dp" />
+        <Button
+            android:id="@+id/btnJoin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/join_game" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/board_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
+            android:text="@string/connect_4"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvRoomCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/room_code"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvPlayer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/player1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvPlayer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/player2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvCurrentPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:text="@string/current_player"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/btnCol1"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol2"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol3"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol4"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol5"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol6"
+                    style="@style/ColumnButtonStyle" />
+
+                <Button
+                    android:id="@+id/btnCol7"
+                    style="@style/ColumnButtonStyle" />
+            </TableRow>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:stretchColumns="*">
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_0_0"
+                        style="@style/CellStyle"/>
+
+                    <ImageView
+                        android:id="@+id/cell_0_1"
+                        style="@style/CellStyle"
+                        android:src="@drawable/red_circle" />
+
+                    <ImageView
+                        android:id="@+id/cell_0_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_0_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_0_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_0_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_0_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_1_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_1_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_2_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_2_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_3_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_3_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_4_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_4_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_5_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_5_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/cell_6_0"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_1"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_2"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_3"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_4"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_5"
+                        style="@style/CellStyle" />
+
+                    <ImageView
+                        android:id="@+id/cell_6_6"
+                        style="@style/CellStyle" />
+                </TableRow>
+
+
+            </TableLayout>
+
+        </TableLayout>
+
+    </LinearLayout>
+</LinearLayout>

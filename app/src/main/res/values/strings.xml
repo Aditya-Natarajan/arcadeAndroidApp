@@ -23,6 +23,15 @@
     <string name="word_rank">WORD RANK</string>
     <string name="play_again">PLAY AGAIN</string>
     <string name="exit">EXIT</string>
+    <string name="wordrank">WORDRANK</string>
+    <string name="connect_4">CONNECT 4</string>
+    <string name="current_player">"Current Player: "</string>
+    <string name="host_game">HOST GAME</string>
+    <string name="enter_room_code">Enter Room Code:</string>
+    <string name="join_game">JOIN GAME</string>
+    <string name="room_code">"Room Code: "</string>
+    <string name="player1">Player 1:</string>
+    <string name="player2">Player 2:</string>
     <string-array name="dropdown_items">
         <item>Select a category</item>
         <item>country</item>

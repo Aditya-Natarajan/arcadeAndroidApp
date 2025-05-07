@@ -20,13 +20,20 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/wordle"
-        android:layout_margin="100dp"/>
+        android:layout_margin="50dp"
+        android:text="@string/wordle"/>
     <Button
-        android:id="@+id/btnLexipass"
+        android:id="@+id/btnWordRank"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="100dp"
-        android:text="Lexipass"/>
+        android:layout_margin="50dp"
+        android:text="@string/wordrank"/>
+    <Button
+        android:id="@+id/btnConnectFour"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="50dp"
+        android:text="@string/connect_4"/>
 </LinearLayout>
