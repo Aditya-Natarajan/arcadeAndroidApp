@@ -61,7 +61,7 @@ class Login : AppCompatActivity() {
             var password = etPassword.text.toString()
             var serviceID  = 1
             if(tbLogin.isChecked){
-                serviceID = 4
+                serviceID = 2
             }
             if(!tbSecure.isChecked){
                 password = ""
@@ -74,11 +74,11 @@ class Login : AppCompatActivity() {
             val request = JsonObjectRequest(
                 Request.Method.POST, url, jsonBody,
                 { response ->
-                    val message = response.optString("Message")
-                    val code = response.optString("Code")
+                    val message = response.optString("message")
+                    val code = response.optInt("code")
                     val validUsername = response.optString("username")
                     val userId = response.optInt("user_id")
-                    if (code.toInt() != 0) {
+                    if (code != 0) {
                         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                         etUsername.text.clear()
                         etPassword.text.clear()
