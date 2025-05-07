@@ -19,44 +19,45 @@ import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var app: App
+//    private lateinit var app: App
 
     private var selectedCategory: String? = null
     private var userId: Int = 18
     private var constantRowInserted = false // Prevent duplicate insert
     private var ans = ""
-    private var user_id: Int = -1
+    private var user_id: Int = 18
     private var lives = 0
-    
+
     private lateinit var spinner: Spinner
-    private lateinit var btnPlay :Button
+    private lateinit var btnPlay: Button
     private lateinit var btnGuess: Button
-    private lateinit var btnAns : Button
-    private lateinit var btnExit:Button
+    private lateinit var btnAns: Button
+    private lateinit var btnExit: Button
     private lateinit var btnPlayAgain: Button
-    private lateinit var etGuess:EditText
-    private lateinit var llContainer:LinearLayout
-    private lateinit var tvHint:TextView
-    
+    private lateinit var etGuess: EditText
+    private lateinit var llContainer: LinearLayout
+    private lateinit var tvHint: TextView
+    private lateinit var app: App
+
 
     private var url = "https://arcade.pivotpt.in/word_gameAPI.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_rank)
-
+        VolleySingleton.init(this)
         spinner = findViewById(R.id.spinner)
-        
+
         btnPlay = findViewById<Button>(R.id.play)
         btnGuess = findViewById<Button>(R.id.guessbtn)
         btnPlayAgain = findViewById<Button>(R.id.playagain)
         btnExit = findViewById<Button>(R.id.exit)
         btnAns = findViewById<Button>(R.id.hint)
-        
+
         etGuess = findViewById<EditText>(R.id.guess)
-        val llContainer = findViewById<LinearLayout>(R.id.resultContainer)
-        val hint = findViewById<TextView>(R.id.anss)
+        llContainer = findViewById<LinearLayout>(R.id.resultContainer)
+        tvHint = findViewById<TextView>(R.id.anss)
+
 
         app = application as App
         user_id = app.userId
@@ -100,15 +101,18 @@ class MainActivity : AppCompatActivity() {
                 val request = JsonObjectRequest(
                     Request.Method.POST, url, jsonBody,
                     { response ->
-                        val message = response.optString("Message")
-                        val code = response.optInt("Code")
+                        val message = response.optString("message")
+                        val code = response.optInt("code")
                         val game_state = response.optJSONObject("0")
                         ans = game_state["secret"].toString()
-
+                        Log.d("EXTRACTED_DATA", "secrete: $ans")
+                        Log.d("EXTRACTED_DATA", "Message: $message")
+                        Log.d("EXTRACTED_DATA", "Code: $code")
+                        tvHint.setText(ans)
                         if (code != 0) {
-                            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
                         } else {
-                            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
                             spinner.visibility = View.GONE
                             btnPlay.visibility = View.GONE
                             etGuess.visibility = View.VISIBLE
@@ -134,7 +138,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a guess", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val jsonBody = JSONObject().apply {
                 put("serviceID", 2)
                 put("user_id", user_id)
@@ -150,15 +153,18 @@ class MainActivity : AppCompatActivity() {
 
                     // Extract the "0" object
 
-                    val code = response.optInt("Code")
-                    val message = response.optString("Message")
-                    if(code == 20){
-                        Toast.makeText(this,"You entered an invalid word",Toast.LENGTH_LONG).show()
-                    }
-                    else{
+                    var code = response.optInt("code")
+                    var message = response.optString("message")
+                    if (code == 20) {
+                        Toast.makeText(this, "You entered an invalid word", Toast.LENGTH_LONG)
+                            .show()
+                    } else {
                         val serviceCodeObj = response.optJSONObject("0")
                         val serviceCode =
-                            serviceCodeObj?.optInt("Service Code", -1)  // Default to -1 if not found
+                            serviceCodeObj?.optInt(
+                                "Service Code",
+                                -1
+                            )  // Default to -1 if not found
 
                         // Extract the "1" object (which contains the guess data)
                         val guessObj = response.optJSONObject("1")
@@ -166,9 +172,11 @@ class MainActivity : AppCompatActivity() {
 
                         // Extract the guess data if available
                         val guessWord =
-                            guessArray?.optJSONObject(guessArray.length()-1)?.optString("word", "unknown").toString()
+                            guessArray?.optJSONObject(guessArray.length() - 1)
+                                ?.optString("word", "unknown").toString()
                         val diffValue =
-                            guessArray?.optJSONObject(guessArray.length()-1)?.optInt("diff", 0).toString().toInt()
+                            guessArray?.optJSONObject(guessArray.length() - 1)?.optInt("diff", 0)
+                                .toString().toInt()
 
                         // Extract other values
 
@@ -179,8 +187,6 @@ class MainActivity : AppCompatActivity() {
                         Log.d("EXTRACTED_DATA", "Message: $message")
                         Log.d("EXTRACTED_DATA", "Code: $code")
 
-                        // Show a Toast with a message
-                        Toast.makeText(this, "Message: $message", Toast.LENGTH_SHORT).show()
                         val rowLayout = createGuessRow(guessWord, diffValue)
                         val constantIndex =
                             llContainer.indexOfChild(llContainer.findViewWithTag("constant_row"))
@@ -212,18 +218,21 @@ class MainActivity : AppCompatActivity() {
                                     if (lives >= 5) {
                                         btnAns.visibility = View.VISIBLE
 
-                                        hint.text = ans
                                         btnAns.setOnClickListener {
-                                            hint.visibility = View.VISIBLE
-                                        }
+                                            if (tvHint.visibility == View.VISIBLE) {
+                                                tvHint.visibility = View.GONE
+                                            } else {
+                                                tvHint.visibility = View.VISIBLE
+                                                tvHint.text = ans
+                                            }
 
+                                        }
                                     }
+
                                     llContainer.addView(rowLayout, insertIndex)
                                 }
 
                             } else if (diffValue < 0) {
-                                // Insert below constant row in descending order (closer to 0 first)
-
                                 var insertIndex = childCount
                                 for (i in constantIndex + 1 until childCount) {
                                     val child = llContainer.getChildAt(i) as? LinearLayout
@@ -248,12 +257,17 @@ class MainActivity : AppCompatActivity() {
                                     if (lives >= 5) {
                                         btnAns.visibility = View.VISIBLE
 
-                                        hint.text = ans
                                         btnAns.setOnClickListener {
-                                            hint.visibility = View.VISIBLE
-                                        }
+                                            if (tvHint.visibility == View.VISIBLE) {
+                                                tvHint.visibility = View.GONE
+                                            } else {
+                                                tvHint.visibility = View.VISIBLE
+                                                tvHint.text = ans
+                                            }
 
+                                        }
                                     }
+
                                     llContainer.addView(rowLayout, insertIndex)
                                 }
                             }
@@ -264,11 +278,12 @@ class MainActivity : AppCompatActivity() {
                         etGuess.text.clear()
                         hideKeyboard(etGuess)
 
-                        if (code == 0 || code == 10) {
-                            val constantRow = llContainer.findViewWithTag<LinearLayout>("constant_row")
+                        if (guessWord == ans) {
+                            val constantRow =
+                                llContainer.findViewWithTag<LinearLayout>("constant_row")
                             val wordTextView = constantRow?.getChildAt(0) as? TextView
                             wordTextView?.text = guessWord
-                            Toast.makeText(this@MainActivity, "code is: $message", Toast.LENGTH_LONG).show()
+
                             wordTextView?.animate()?.alpha(1f)?.setDuration(1000)?.start()
 
                             Handler().postDelayed({
@@ -281,21 +296,21 @@ class MainActivity : AppCompatActivity() {
                                 selectedCategory = null
                                 constantRowInserted = false
                                 btnAns.visibility = View.GONE
-                                hint.visibility = View.GONE
+                                tvHint.visibility = View.GONE
                                 btnPlayAgain.visibility = View.VISIBLE
                                 btnExit.visibility = View.VISIBLE
                             }, 2000)
                         } else {
-                            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
                         }
                     }
-                    },
-                    { error ->
-                        Log.e("VOLLEY_ERROR", "Request failed: ${error.message}")
-                        Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                )
+                },
+                { error ->
+                    Log.e("VOLLEY_ERROR", "Request failed: ${error.message}")
+                    Toast.makeText(this, "Network error: ${error.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            )
             VolleySingleton.addToRequestQueue(request)
         }
 
@@ -308,41 +323,18 @@ class MainActivity : AppCompatActivity() {
                 false
             }
         }
+
         btnPlayAgain.setOnClickListener {
-            Toast.makeText(this,"hi",Toast.LENGTH_LONG).show()
+            setVisibility()
+            Toast.makeText(this, "Game Restarted!", Toast.LENGTH_SHORT).show()
         }
 
-//        btnPlayAgain.setOnClickListener {
-//            constantRowInserted = false  // ✅ reset here
-//
-//            selectedCategory = spinner.selectedItem.toString()
-//            if (selectedCategory != "Select a Category") {
-//                spinner.visibility = View.GONE
-//                btnPlay.visibility = View.GONE
-//
-//                guess.visibility = View.VISIBLE
-//                btnGuess.visibility = View.VISIBLE
-//
-//                if (!constantRowInserted) {
-//                    insertConstantRow(llContainer)
-//                    constantRowInserted = true
-//                }
-//
-//                Toast.makeText(this, "Selected Category: $selectedCategory", Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(this, "Please select a valid category", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-
-
-        onBackPressedDispatcher.addCallback(this) {
-            showExitConfirmation()
-        }
         btnExit.setOnClickListener {
-            // Optional: Do any cleanup here
-            Toast.makeText(this, "Game Exited!", Toast.LENGTH_SHORT).show()
-            finish()
+            // Optional: Do any cleanup her
+            showExitConfirmation()
+
         }
+
 
     }
 
@@ -388,7 +380,6 @@ class MainActivity : AppCompatActivity() {
 
         return rowLayout
     }
-
 
     private fun insertConstantRow(container: LinearLayout, guess: String? = null) {
         val rowLayout = LinearLayout(this).apply {
@@ -463,6 +454,31 @@ class MainActivity : AppCompatActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+    override fun onBackPressed() {
+        showExitConfirmation()
+    }
+
+    private fun setVisibility(){
+        etGuess.text.clear()
+        llContainer.removeAllViews()
+
+        spinner.visibility = View.VISIBLE
+        btnPlay.visibility = View.VISIBLE
+
+        etGuess.visibility = View.GONE
+        btnGuess.visibility = View.GONE
+
+        selectedCategory = null
+        constantRowInserted = false
+
+        spinner.setSelection(0)
+
+        btnPlayAgain.visibility = View.GONE
+        btnExit.visibility = View.GONE
+    }
+
+
 
 
 }

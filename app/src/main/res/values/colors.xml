@@ -14,4 +14,6 @@
     <color name="cell_empty">#E0E0E0</color>
     <color name="disc_red">#FF6B6B</color>
     <color name="disc_yellow">#FFD93D</color>
+
+    <color name="btnGreen">#26C32C</color>
 </resources>
