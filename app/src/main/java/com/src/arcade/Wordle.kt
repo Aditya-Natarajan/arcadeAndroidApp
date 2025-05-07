@@ -158,9 +158,9 @@ class Wordle : AppCompatActivity() {
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optString("Code")
-                if (code.toInt() != 0) {
+                val message = response.optString("message")
+                val code = response.optInt("code")
+                if (code != 0) {
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 } else {
                     gameStarted = true
@@ -231,8 +231,8 @@ class Wordle : AppCompatActivity() {
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optInt("Code")
+                val message = response.optString("message")
+                val code = response.optInt("code")
                 val guesses = response.optJSONArray("guesses")
                 val bitmaps = response.optJSONArray("bitmaps")
                 val lives = response.optInt("lives")
@@ -336,9 +336,9 @@ class Wordle : AppCompatActivity() {
             val request = JsonObjectRequest(
                 Request.Method.POST, url, jsonBody,
                 { response ->
-                    val message = response.optString("Message")
-                    val code = response.optString("Code")
-                    if (code.toInt() != 0) {
+                    val message = response.optString("message")
+                    val code = response.optInt("code")
+                    if (code != 0) {
                         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                     } else {
                         gameStarted = true
@@ -377,9 +377,9 @@ class Wordle : AppCompatActivity() {
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optString("Code")
-                if (code.toInt() != 0) {
+                val message = response.optString("message")
+                val code = response.optInt("code")
+                if (code != 0) {
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 }
             },

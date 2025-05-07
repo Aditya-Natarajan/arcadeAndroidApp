@@ -10,7 +10,7 @@ import java.net.URISyntaxException
 class App : Application() {
     private lateinit var mSocket: Socket
     var username:String = ""
-    var userId:Int = 1
+    var userId:Int = -1
 
     override fun onCreate() {
         super.onCreate()
@@ -109,7 +109,7 @@ class App : Application() {
                 // ✅ JSON response received
                 val service_code = response.optString("Service Code")
                 val message = response.optString("Message")
-                val code = response.optString("Code")
+                val code = response.optInt("Code")
                 println("Service Code: $service_code, Message: $message, Code : $code")
             },
             { error ->

@@ -57,8 +57,8 @@ class Login : AppCompatActivity() {
 
 
         btnLogin.setOnClickListener {
-            val username = etUsername.text.toString()
-            var password = etPassword.text.toString()
+            val username = etUsername.text.toString().trim()
+            var password = etPassword.text.toString().trim()
             var serviceID  = 1
             if(tbLogin.isChecked){
                 serviceID = 2
@@ -85,6 +85,8 @@ class Login : AppCompatActivity() {
                     } else {
                         app.username = validUsername
                         app.userId = userId
+                        etUsername.text.clear()
+                        etPassword.text.clear()
                         val intent = Intent(this, Home::class.java)
                         startActivity(intent)
                     }
