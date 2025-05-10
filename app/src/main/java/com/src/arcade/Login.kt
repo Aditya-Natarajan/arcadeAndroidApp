@@ -76,17 +76,18 @@ class Login : AppCompatActivity() {
                 { response ->
                     val message = response.optString("message")
                     val code = response.optInt("code")
-                    val validUsername = response.optString("username")
                     val userId = response.optInt("user_id")
                     if (code != 0) {
                         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                         etUsername.text.clear()
                         etPassword.text.clear()
                     } else {
-                        app.username = validUsername
+                        app.username = username
                         app.userId = userId
                         etUsername.text.clear()
                         etPassword.text.clear()
+                        mSocket = app.connectSocket(username,"")
+                        app.mSocket = mSocket
                         val intent = Intent(this, Home::class.java)
                         startActivity(intent)
                     }
@@ -99,5 +100,11 @@ class Login : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if(::mSocket.isInitialized){
+            mSocket.disconnect()
+        }
+    }
 
 }

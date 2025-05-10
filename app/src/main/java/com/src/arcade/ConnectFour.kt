@@ -1,6 +1,5 @@
 package com.src.arcade
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -9,9 +8,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
+import io.socket.client.Socket
 import org.json.JSONObject
 
 class ConnectFour : AppCompatActivity() {
@@ -38,20 +40,23 @@ class ConnectFour : AppCompatActivity() {
 
     private val url = "https://arcade.pivotpt.in/connectFourAPI.php"
 
-    var board = Array(6) { IntArray(7) }
-    var isFilled = IntArray(7)
+    private var board = Array(6) { IntArray(7) }
+    private var isFilled = IntArray(7)
+    private var host = ""
+    private var winner = ""
 
     private lateinit var app: App
+    private lateinit var mSocket: Socket
+
     private lateinit var username: String
-    private var user_id: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.connect_four)
-
+        println("onCreate")
         app = application as App
-        user_id = app.userId
         username = app.username
+        mSocket = app.mSocket
 
         btnHost = findViewById(R.id.btnHost)
         btnJoin = findViewById(R.id.btnJoin)
@@ -100,9 +105,174 @@ class ConnectFour : AppCompatActivity() {
         btn7.setOnClickListener {
             playGame(6)
         }
+
+        onBackPressedDispatcher.addCallback(this) {
+            showExitConfirmation()
+        }
+        initSocketListners()
     }
 
-    private fun buttonStatus(state:Boolean){
+    private fun initSocketListners() {
+        println("initSocketListeners")
+        println("setting up socket listeners....")
+        mSocket.on("joined_room") { args ->
+            println("socket joined room")
+            if (args.isNotEmpty()) {
+                val data = JSONObject(args[0].toString())
+                println("Parsed JSONObject: $data")
+                val player = data.getString("name")
+                if (player != app.username) {
+                    runOnUiThread {
+                        Toast.makeText(this, "$player has joined", Toast.LENGTH_SHORT).show()
+                        tvPlayer2.text = "Player 2: $player"
+                        buttonStatus(true)
+                        tvRoomCode.visibility = View.GONE
+                    }
+                }
+            }
+        }
+        mSocket.on("game_played") { args ->
+            println("socket game_played")
+            val data = JSONObject(args[0].toString())
+            val status = data.getJSONObject("status")
+            val code = status.getInt("code")
+            val message = status.getString("message")
+            runOnUiThread {
+                if (code != 0) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                } else {
+                    val gameState = data.getJSONObject("game_state")
+                    val player = gameState.getString("currentPlayer")
+                    tvCurPlayer.text = "Current Player: $player"
+
+                    val boardArr = gameState.getJSONArray("board")
+                    board = Array(boardArr.length()) { i ->
+                        val rowArray = boardArr.getJSONArray(i)
+                        IntArray(rowArray.length()) { j -> rowArray.getInt(j) }
+                    }
+                    val filled = gameState.getJSONArray("isFilled")
+                    isFilled = IntArray(filled.length()) { i -> filled.optInt(i, 0) }
+                    updateBoard(board, isFilled)
+                }
+            }
+        }
+        mSocket.on("player_left") { args ->
+            println("socket player_left")
+            runOnUiThread {
+                val data = JSONObject(args[0].toString())
+                if (data.getString("username") != username) {
+                    Toast.makeText(this, "opponent left you Won", Toast.LENGTH_SHORT).show()
+                }
+                println("calling finish in socket player left")
+                finish()
+            }
+
+        }
+        mSocket.on("game_draw") {
+            println("socket game_draw")
+            runOnUiThread {
+                gameEndBox(2)
+            }
+        }
+        mSocket.on("game_won") { args ->
+            println("socket game_won")
+            val data = JSONObject(args[0].toString())
+            val status = data.getJSONObject("status")
+            val code = status.getInt("code")
+            val message = status.getString("message")
+            runOnUiThread {
+                if (code != 80) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                } else {
+                    val gameState = data.getJSONObject("game_state")
+                    val boardArr = gameState.getJSONArray("board")
+                    board = Array(boardArr.length()) { i ->
+                        val rowArray = boardArr.getJSONArray(i)
+                        IntArray(rowArray.length()) { j ->
+                            rowArray.getInt(j)
+                        }
+                    }
+                    winner = gameState.getString("winner")
+                    println("b4 calling updateBoard")
+                    updateBoard(board, isFilled)
+                    Toast.makeText(this, "${this.winner} Won", Toast.LENGTH_SHORT).show()
+                    if (winner == username) {
+                        gameEndBox(1)
+                    } else {
+                        gameEndBox(0)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mSocket.connected()) {
+            mSocket.off()
+        }
+    }
+    //    override fun onStart() {
+//        super.onStart()
+//        println("onStart")
+//        if (!::app.isInitialized) {
+//            app = application as App
+//        }
+//    }
+    private fun gameEndBox(condition: Int) {
+        println("gameEndBox")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Game Status")
+        var message = ""
+        when (condition) {
+            1 -> {
+                message = "You Won :D"
+            }
+
+            0 -> {
+                message = "You Lost :("
+            }
+
+            2 -> {
+                message = "Game Drawn"
+            }
+        }
+        builder.setMessage(message)
+        builder.setPositiveButton("Ok") { dialog, _ ->
+            dialog.dismiss()
+            leaveGame(true)
+            finish()
+        }
+
+        val dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    private fun showExitConfirmation() {
+        println("showExitConfirmation")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Exit Game")
+        builder.setMessage("Are you sure you want to forfeit the game?")
+
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            dialog.dismiss()
+            leaveGame(false)
+            finish()
+        }
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    private fun buttonStatus(state: Boolean) {
         btn1.isEnabled = state
         btn2.isEnabled = state
         btn3.isEnabled = state
@@ -114,29 +284,30 @@ class ConnectFour : AppCompatActivity() {
 
     private fun hostGame() {
         buttonStatus(false)
-        //call socket functions
         val jsonBody = JSONObject().apply {
             put("serviceID", 1)
-            put("user_id", user_id)
+            put("username", username)
         }
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optString("Code")
+                val message = response.optString("message")
+                val code = response.optInt("code")
 
-                tvRoomCode.text = "Room Code: " + response.getString("room_code")
-
-                val gameState = response.getJSONObject("game_state")
-                tvPlayer1.text = "Player1: " + gameState.getString("player1")
-                tvPlayer2.text = "Player2: " + gameState.getString("player2")
-                tvCurPlayer.text = "Current Player: " + gameState.getString("currentPlayer")
-
-
-                if (code.toInt() != 0) {
-                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                if (code != 0) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 } else {
                     llLobby.visibility = View.GONE
+                    val room_code = response.getString("room_code")
+                    tvRoomCode.text = "Room Code: " + room_code
+                    mSocket.emit("join_room", room_code)
+                    app.room_code = room_code
+                    host = username
+                    val gameState = response.getJSONObject("game_state")
+                    tvPlayer1.text = "Player1: " + gameState.getString("player1")
+                    tvPlayer2.text = "Player2: " + gameState.getString("player2")
+                    tvCurPlayer.text = "Current Player: " + gameState.getString("currentPlayer")
+
                     llGame.visibility = View.VISIBLE
                 }
             },
@@ -149,30 +320,39 @@ class ConnectFour : AppCompatActivity() {
 
     private fun joinGame() {
         buttonStatus(true)
-        //call socket functions
+        val roomCode = etRoomCode.text.toString()
+        if (roomCode.isEmpty()) {
+            Toast.makeText(this, "Please enter Room Code to join", Toast.LENGTH_SHORT).show()
+            return;
+        }
         val jsonBody = JSONObject().apply {
             put("serviceID", 2)
-            put("user_id", user_id)
-            put("room_code", etRoomCode.text.toString())
+            put("username", username)
+            put("room_code", roomCode)
         }
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optString("Code")
+                val message = response.optString("message")
+                val code = response.optInt("code")
 
-                tvRoomCode.text = "Room Code: " + response.getString("room_code")
-
-                val gameState = response.getJSONObject("game_state")
-                tvPlayer1.text = "Player1: " + gameState.getString("player1")
-                tvPlayer2.text = "Player2: " + gameState.getString("player2")
-                tvCurPlayer.text = "Current Player: " + gameState.getString("currentPlayer")
-
-
-                if (code.toInt() != 0) {
-                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                if (code != 0) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 } else {
                     llLobby.visibility = View.GONE
+
+                    val room_code = response.getString("room_code");
+                    tvRoomCode.text = "Room Code: " + room_code
+                    app.room_code = room_code
+
+                    mSocket.emit("join_room", room_code)
+
+                    val gameState = response.getJSONObject("game_state")
+                    tvPlayer1.text = "Player1: " + gameState.getString("player1")
+                    tvPlayer2.text = "Player2: " + gameState.getString("player2")
+                    tvCurPlayer.text = "Current Player: " + gameState.getString("currentPlayer")
+
+                    tvRoomCode.visibility = View.GONE
                     llGame.visibility = View.VISIBLE
                 }
             },
@@ -183,61 +363,50 @@ class ConnectFour : AppCompatActivity() {
         VolleySingleton.addToRequestQueue(request)
     }
 
-    //    @SuppressLint("DiscouragedApi")
-    private fun updateBoard(column: Int, row: Int, color: Int) {
-        val cellId = resources.getIdentifier("cell_${row}_${column}", "id", packageName)
-        val cell = findViewById<ImageView>(cellId)
-        when (color) {
-            1 -> cell.setImageResource(R.drawable.red_circle)
-            2 -> cell.setImageResource(R.drawable.yellow_circle)
-            else -> cell.setImageResource(R.drawable.empty_circle) // clear the cell
+    private fun updateBoard(board: Array<IntArray>, filled: IntArray) {
+        println("updateBoard")
+        for (row in board.indices) {
+            for (col in board[row].indices) {
+                val cellId = resources.getIdentifier("cell_${row}_${col}", "id", packageName)
+                val cell = findViewById<ImageView>(cellId)
+                when (board[row][col]) {
+                    1 -> cell.setImageResource(R.drawable.red_circle)
+                    2 -> cell.setImageResource(R.drawable.yellow_circle)
+                    else -> cell.setImageResource(R.drawable.empty_circle)
+                }
+            }
+        }
+        for (i in 0..6) {
+            if (filled[i] == 1) {
+                val btnId = resources.getIdentifier("btnCol${i + 1}", "id", packageName)
+                val btn = findViewById<Button>(btnId)
+                btn.visibility = View.INVISIBLE
+            }
         }
     }
 
-
-    private fun playGame(column :Int){
-        //socket emit
-
+    private fun playGame(column: Int) {
+        println("playGame")
         val jsonBody = JSONObject().apply {
-            put("serviceID", 5)
+            put("serviceID", 3)
             put("username", username)
-            put("room_code", etRoomCode.text.toString())
-            put("column",column)
+            put("room_code", app.room_code)
+            put("column", column)
         }
         val request = JsonObjectRequest(
             Request.Method.POST, url, jsonBody,
             { response ->
-                val message = response.optString("Message")
-                val code = response.optString("Code")
-
-                if (code.toInt() != 0) {
-                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                } else {
-                    val gameState = response.getJSONObject("game_state")
-
-                    tvCurPlayer.text = "Current Player: " + gameState.getString("currentPlayer")
-
-                    val boardArr = gameState.getJSONArray("board")
-                    val filled = gameState.getJSONArray("isFilled")
-
-                    for(i in 0..7){
-                        isFilled[i] = filled.getInt(i)
+                val message = response.optString("message")
+                val code = response.optInt("code")
+                println("code is :$code")
+                when (code) {
+                    80, 81, 0 -> {
+                        // pass
                     }
-                    var flag = true
-                    var color = 0
-                    var rowIndex = 0
-                    for(i in 0..5){
-                        val row = boardArr.getJSONArray(i)
-                        for(j in 0 .. 6){
-                            board[i][j] = row.getInt(j)
-                            if(board[i][j] != 0 && flag){
-                                rowIndex = i
-                                flag = false
-                                color = board[i][j]
-                            }
-                        }
+
+                    else -> {
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     }
-                    updateBoard(column,rowIndex,color)
                 }
             },
             { error ->
@@ -247,5 +416,38 @@ class ConnectFour : AppCompatActivity() {
         VolleySingleton.addToRequestQueue(request)
     }
 
+    private fun leaveGame(proper: Boolean) {
+        println("leaveGame")
+        var serviceID = 4
+        if (proper) {
+            serviceID = 5
+        }
+        val jsonBody = JSONObject().apply {
+            put("serviceID", serviceID)
+            put("username", username)
+            put("room_code", app.room_code)
+        }
+        println("post body :" + jsonBody.toString())
+        val request = JsonObjectRequest(
+            Request.Method.POST, url, jsonBody,
+            { response ->
+                println("leave room rc : " + response.toString())
+                val message = response.optString("message")
+                val code = response.optInt("code")
+
+                if (code != 0) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                } else {
+                    mSocket.emit("leave_room", app.room_code)
+                }
+            },
+            { error ->
+                println("leaveGame Error : " + error.toString())
+                println("Volley error leaveGame : ${error.message}")
+            }
+        )
+
+        VolleySingleton.addToRequestQueue(request)
+    }
 
 }

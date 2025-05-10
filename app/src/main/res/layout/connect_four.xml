@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <Button
             android:id="@+id/btnHost"
@@ -42,7 +42,7 @@
         android:background="@color/board_background"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/player1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/player2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -135,8 +135,7 @@
 
                     <ImageView
                         android:id="@+id/cell_0_1"
-                        style="@style/CellStyle"
-                        android:src="@drawable/red_circle" />
+                        style="@style/CellStyle" />
 
                     <ImageView
                         android:id="@+id/cell_0_2"
@@ -313,38 +312,6 @@
                         android:id="@+id/cell_5_6"
                         style="@style/CellStyle" />
                 </TableRow>
-
-                <TableRow>
-
-                    <ImageView
-                        android:id="@+id/cell_6_0"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_1"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_2"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_3"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_4"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_5"
-                        style="@style/CellStyle" />
-
-                    <ImageView
-                        android:id="@+id/cell_6_6"
-                        style="@style/CellStyle" />
-                </TableRow>
-
 
             </TableLayout>
 
